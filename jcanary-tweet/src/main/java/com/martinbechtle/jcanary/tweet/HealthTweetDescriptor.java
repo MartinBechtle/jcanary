@@ -18,12 +18,13 @@ public @interface HealthTweetDescriptor {
 
     String name();
 
-    DependencyType type();
+    DependencyType type() default DependencyType.RESOURCE;
 
-    DependencyImportance importance();
+    DependencyImportance importance() default DependencyImportance.PRIMARY;
 
     /**
-     * Time to live (to cache the result without re-computing) in seconds
+     * Time to live (to cache the result without re-computing) in seconds.
+     * Use a negative value to never cache. Default is one minute.
      */
-    long secondsToLive();
+    long secondsToLive() default 60;
 }
