@@ -1,1 +1,3 @@
 rootProject.name = 'jcanary'
+include 'jcanary-api'
+include 'jcanary-tweet'

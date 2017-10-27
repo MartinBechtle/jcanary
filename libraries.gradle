@@ -1,0 +1,19 @@
+ext {
+    // compile
+    jrequireVersion = '1.0.1'
+
+    // test
+    // assertJVersion = '3.8.0' TODO
+    junitVersion = '4.12'
+    mockitoVersion = '1.10.19'
+
+    libraries = [
+            // compile
+
+            // test
+//            assertJ           : "org.assertj:assertj-core:${assertJVersion}",
+//            junit             : "junit:junit:${junitVersion}",
+//            mockito           : "org.mockito:mockito-all:${mockitoVersion}",
+    ]
+
+}
