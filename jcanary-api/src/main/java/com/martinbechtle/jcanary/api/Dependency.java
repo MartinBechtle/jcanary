@@ -1,5 +1,8 @@
 package com.martinbechtle.jcanary.api;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import static com.martinbechtle.jrequire.Require.notEmpty;
 import static com.martinbechtle.jrequire.Require.notNull;
 
@@ -36,5 +39,45 @@ public class Dependency {
     public String getName() {
 
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Dependency)) {
+            return false;
+        }
+
+        Dependency that = (Dependency) o;
+
+        return new EqualsBuilder()
+                .append(importance, that.importance)
+                .append(type, that.type)
+                .append(name, that.name)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(17, 37)
+                .append(importance)
+                .append(type)
+                .append(name)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+
+        return "Dependency{" +
+                "importance=" + importance +
+                ", type=" + type +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

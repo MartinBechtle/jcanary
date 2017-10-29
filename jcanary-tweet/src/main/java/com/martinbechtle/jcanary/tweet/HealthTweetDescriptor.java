@@ -26,5 +26,5 @@ public @interface HealthTweetDescriptor {
      * Time to live (to cache the result without re-computing) in seconds.
      * Use a negative value to never cache. Default is one minute.
      */
-    long secondsToLive() default 60;
+    int secondsToLive() default 60;
 }

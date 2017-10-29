@@ -28,7 +28,9 @@ allprojects {
 
     dependencies {
         compile(libraries.jrequire)
+        compile(libraries.commonsLang)
         testCompile(libraries.junitApi)
+        testCompile(libraries.mockito)
         testRuntime(libraries.junitEngine)
     }
 }

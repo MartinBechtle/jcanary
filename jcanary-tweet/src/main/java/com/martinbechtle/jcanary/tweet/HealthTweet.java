@@ -1,6 +1,8 @@
 package com.martinbechtle.jcanary.tweet;
 
 import com.martinbechtle.jcanary.api.Dependency;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static com.martinbechtle.jrequire.Require.notNull;
 
@@ -31,4 +33,40 @@ public class HealthTweet {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof HealthTweet)) {
+            return false;
+        }
+
+        HealthTweet that = (HealthTweet) o;
+
+        return new EqualsBuilder()
+                .append(dependency, that.dependency)
+                .append(result, that.result)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(17, 37)
+                .append(dependency)
+                .append(result)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+
+        return "HealthTweet{" +
+                "dependency=" + dependency +
+                ", result=" + result +
+                '}';
+    }
 }

@@ -3,20 +3,19 @@ ext {
     jrequireVersion = '0.9'
 
     // test
-    // assertJVersion = '3.8.0' TODO
+    commonsLangVersion = '3.6'
     junitVersion = '5.0.1'
     mockitoVersion = '1.10.19'
 
     libraries = [
             // compile
             jrequire            : "com.github.MartinBechtle:JRequire:${jrequireVersion}",
+            commonsLang         : "org.apache.commons:commons-lang3:${commonsLangVersion}",
 
             // test
-//            assertJ           : "org.assertj:assertj-core:${assertJVersion}",
-
             junitApi               : "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
             junitEngine            : "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
-//            mockito           : "org.mockito:mockito-all:${mockitoVersion}",
+            mockito           : "org.mockito:mockito-all:${mockitoVersion}",
     ]
 
 }

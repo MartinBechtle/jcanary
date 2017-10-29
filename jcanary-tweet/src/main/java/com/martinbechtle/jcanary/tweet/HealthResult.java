@@ -1,6 +1,8 @@
 package com.martinbechtle.jcanary.tweet;
 
 import com.martinbechtle.jcanary.api.DependencyStatus;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Optional;
 
@@ -43,5 +45,42 @@ public class HealthResult {
     public String getStatusText() {
 
         return statusText;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof HealthResult)) {
+            return false;
+        }
+
+        HealthResult that = (HealthResult) o;
+
+        return new EqualsBuilder()
+                .append(status, that.status)
+                .append(statusText, that.statusText)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(17, 37)
+                .append(status)
+                .append(statusText)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+
+        return "HealthResult{" +
+                "status=" + status +
+                ", statusText='" + statusText + '\'' +
+                '}';
     }
 }

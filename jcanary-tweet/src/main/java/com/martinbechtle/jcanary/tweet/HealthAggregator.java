@@ -3,6 +3,7 @@ package com.martinbechtle.jcanary.tweet;
 import com.martinbechtle.jcanary.api.DependencyStatus;
 import com.martinbechtle.jrequire.Require;
 
+import java.time.Clock;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,7 +19,17 @@ import static java.util.stream.Collectors.toList;
  */
 public class HealthAggregator {
 
-    private LinkedHashMap<String, HealthTweeter> healthTweets = new LinkedHashMap<>();
+    private final LinkedHashMap<String, HealthTweeter> healthTweets;
+
+    private final Clock clock;
+
+    static final String UNCAUGTHT_EXCEPTION_ERRMSG = "Error while trying to compute status";
+
+    public HealthAggregator(Clock clock) {
+
+        this.clock = clock;
+        this.healthTweets = new LinkedHashMap<>();
+    }
 
     /**
      * Register a {@link HealthMonitor}
@@ -31,7 +42,7 @@ public class HealthAggregator {
 
         Require.notNull(monitor);
 
-        HealthTweeter healthTweeter = new HealthTweeter(monitor);
+        HealthTweeter healthTweeter = new HealthTweeter(monitor, clock);
         String healthTweeterName = healthTweeter.getName();
 
         if (healthTweets.containsKey(healthTweeterName)) {
@@ -61,7 +72,7 @@ public class HealthAggregator {
                     catch (RuntimeException e) {
                         return new HealthTweet(
                                 healthTweeter.getDependency(),
-                                HealthResult.of(DependencyStatus.UNKNOWN, "Error while trying to compute status"));
+                                HealthResult.of(DependencyStatus.UNKNOWN, UNCAUGTHT_EXCEPTION_ERRMSG));
                     }
                 })
                 .collect(toList());
