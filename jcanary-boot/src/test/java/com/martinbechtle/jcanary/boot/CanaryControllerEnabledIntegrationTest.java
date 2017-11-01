@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Martin Bechtle
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {SpringBootTestApplication.class})
+@SpringApplicationConfiguration(classes = {IntegrationTestConfig.class})
 @WebAppConfiguration
 @ActiveProfiles({"enabled"})
 public class CanaryControllerEnabledIntegrationTest {
@@ -44,10 +44,12 @@ public class CanaryControllerEnabledIntegrationTest {
 
         mockMvc.perform(get("/canary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].dependency.importance").value("PRIMARY"))
-                .andExpect(jsonPath("$[0].dependency.type").value("RESOURCE"))
-                .andExpect(jsonPath("$[0].dependency.name").value("dummyMonitor"))
-                .andExpect(jsonPath("$[0].result.status").value("HEALTHY"))
-                .andExpect(jsonPath("$[0].result.statusText").value(""));
+                .andExpect(jsonPath("$.serviceName").value("test-service"))
+                .andExpect(jsonPath("$.result").value("OK"))
+                .andExpect(jsonPath("$.tweets[0].dependency.importance").value("PRIMARY"))
+                .andExpect(jsonPath("$.tweets[0].dependency.type").value("RESOURCE"))
+                .andExpect(jsonPath("$.tweets[0].dependency.name").value("dummyMonitor"))
+                .andExpect(jsonPath("$.tweets[0].result.status").value("HEALTHY"))
+                .andExpect(jsonPath("$.tweets[0].result.statusText").value(""));
     }
 }

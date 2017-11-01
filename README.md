@@ -17,6 +17,9 @@ The canary endpoint could raise an alarm if no task was run in the last X+1 hour
 ## Requirements
 * Java version 8 or greater
 
+## Versioning
+Version 1 will have to be extremely flexible, so expect breaking changes between minor versions.
+We will use semantic versioning starting with version 2, as soon as the API is stable and future-proof.
 
 ## How does JCanary work
 JCanary allows you to define custom Dependencies and Health Monitors for your service.
@@ -56,7 +59,7 @@ and the dependency:
 	<dependency>
 		<groupId>com.github.MartinBechtle.jcanary</groupId>
 		<artifactId>jcanary-tweet</artifactId>
-		<version>1.0.0</version>
+		<version>1.2.0-RC1</version>
 	</dependency>
 ```
 
@@ -72,7 +75,7 @@ To use it in your Gradle build add:
 
 and the dependency:
 ```groovy
-compile "com.github.MartinBechtle.jcanary:jcanary-tweet:1.0.0"
+compile "com.github.MartinBechtle.jcanary:jcanary-tweet:1.2.0-RC1"
 ```
 
 ## Using with Spring Boot
@@ -175,27 +178,56 @@ curl -X GET http://localhost:9090/tide-backend/rest/api/v3/banking/canary?secret
 ```
 
 ```json
-[
-   {
-      "dependency":{
-         "importance":"PRIMARY",
-         "type":"DATABASE",
-         "name":"my-database"
-      },
-      "result":{
-         "status":"HEALTHY",
-         "statusText":""
+{
+   "serviceName":"test-service",
+   "result":"OK",
+   "tweets":[
+      {
+         "dependency":{
+            "importance":"PRIMARY",
+            "type":"RESOURCE",
+            "name":"dummyMonitor"
+         },
+         "result":{
+            "status":"HEALTHY",
+            "statusText":""
+         }
       }
-   }
-]
+   ]
+}
 ```
 
 Example of response in case of wrong secret:
 
 ```bash
 curl -X GET http://localhost:9090/tide-backend/rest/api/v3/banking/canary?secret=wrongSecret
-< HTTP/1.1 401 
-Authentication required%  
+< HTTP/1.1 401  
+```
+
+```json
+{
+   "serviceName":"test-service",
+   "result":"FORBIDDEN",
+   "tweets":[]
+}
+```
+
+Yes, we know that HTTP status 403 is for access forbidden. But actually 401 is more suitable for an authentication failure. 
+The result "FORBIDDEN" has to do with the Canary API and not really anything to do with the HTTP protocol.
+
+Example of response in case of uncaught exception while processing the request:
+
+```bash
+curl -X GET http://localhost:9090/tide-backend/rest/api/v3/banking/canary?secret=wrongSecret
+< HTTP/1.1 500   
+```
+
+```json
+{
+   "serviceName":"test-service",
+   "result":"ERROR",
+   "tweets":[]
+}
 ```
 
 
@@ -227,5 +259,3 @@ and what importance it has, and your health monitor implementations can decide w
 A web based portal will be built allowing to visually monitor your services, supporting different and customised alarm mechanisms.
 It will also allow to have a high level visual overview of your architecture if you assign unique names to all your 
 dependencies across multiple services, as it will figure out all inter-dependencies.
-
-

@@ -1,6 +1,5 @@
-package com.martinbechtle.jcanary.tweet;
+package com.martinbechtle.jcanary.api;
 
-import com.martinbechtle.jcanary.api.DependencyStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

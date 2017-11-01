@@ -1,5 +1,7 @@
 package com.martinbechtle.jcanary.tweet;
 
+import com.martinbechtle.jcanary.api.HealthMonitor;
+import com.martinbechtle.jcanary.api.HealthResult;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 

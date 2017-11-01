@@ -1,7 +1,7 @@
 package com.martinbechtle.jcanary.boot;
 
-import com.martinbechtle.jcanary.tweet.HealthMonitor;
-import com.martinbechtle.jcanary.tweet.HealthResult;
+import com.martinbechtle.jcanary.api.HealthMonitor;
+import com.martinbechtle.jcanary.api.HealthResult;
 import com.martinbechtle.jcanary.tweet.HealthTweetDescriptor;
 
 /**

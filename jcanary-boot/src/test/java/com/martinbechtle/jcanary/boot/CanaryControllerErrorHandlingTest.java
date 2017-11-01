@@ -1,5 +1,6 @@
 package com.martinbechtle.jcanary.boot;
 
+import com.martinbechtle.jcanary.tweet.HealthAggregator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,22 +13,27 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration test for the case in which jcanary is disabled (see application-disabled.properties)
+ * * Integration test for the case in which jcanary is disabled (see application-enabled.properties)
  *
  * @author Martin Bechtle
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {IntegrationTestConfig.class})
+@SpringApplicationConfiguration(classes = {ApiTestConfig.class})
 @WebAppConfiguration
-@ActiveProfiles({"disabled"})
-public class CanaryControllerDisabledIntegrationTest {
+@ActiveProfiles({"enabled"})
+public class CanaryControllerErrorHandlingTest {
 
     @Autowired
     private WebApplicationContext context;
+
+    @Autowired
+    private HealthAggregator healthAggregator;
 
     private MockMvc mockMvc;
 
@@ -39,9 +45,15 @@ public class CanaryControllerDisabledIntegrationTest {
     }
 
     @Test
-    public void canaryEndpoint_ShouldReturnNotFound_WhenDisabledInConfig() throws Exception {
+    public void canaryEndpoint_ShouldReturnFailedCanary_WhenExceptionThrown() throws Exception {
+
+        when(healthAggregator.collect())
+                .thenThrow(new RuntimeException());
 
         mockMvc.perform(get("/canary"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.serviceName").value("test-service"))
+                .andExpect(jsonPath("$.result").value("ERROR"))
+                .andExpect(jsonPath("$.tweets").isEmpty());
     }
 }

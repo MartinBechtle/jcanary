@@ -8,11 +8,12 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Clock;
 
 /**
+ * Configuration for integration tests
+ *
  * @author Martin Bechtle
  */
 @SpringBootApplication
-@Configuration
-public class SpringBootTestApplication {
+public class IntegrationTestConfig {
 
     @Bean(name = "canaryHealthAggregator")
     public HealthAggregator healthAggregator() {
