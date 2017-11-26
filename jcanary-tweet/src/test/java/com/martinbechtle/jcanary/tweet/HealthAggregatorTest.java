@@ -1,9 +1,6 @@
 package com.martinbechtle.jcanary.tweet;
 
-import com.martinbechtle.jcanary.api.Dependency;
-import com.martinbechtle.jcanary.api.DependencyImportance;
-import com.martinbechtle.jcanary.api.DependencyStatus;
-import com.martinbechtle.jcanary.api.DependencyType;
+import com.martinbechtle.jcanary.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

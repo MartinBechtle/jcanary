@@ -1,5 +1,7 @@
 package com.martinbechtle.jcanary.boot;
 
+import com.martinbechtle.jcanary.api.Canary;
+import com.martinbechtle.jcanary.api.HealthTweet;
 import com.martinbechtle.jcanary.tweet.HealthAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,11 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.ResponseEntity.status;
 
 /**
  * Exposes the result of {@link HealthAggregator} as a {@link RestController} GET request.
@@ -35,16 +41,20 @@ public class CanaryController {
 
     private final String secret;
 
+    private final String serviceName;
+
     @Autowired
     public CanaryController(@Qualifier("canaryHealthAggregator") HealthAggregator healthAggregator,
-                            @Value("${jcanary.boot.secret:}") String secret) {
+                            @Value("${jcanary.boot.secret:}") String secret,
+                            @Value("${jcanary.boot.serviceName:unknown-service}") String serviceName) {
 
         this.healthAggregator = healthAggregator;
         this.secret = secret;
+        this.serviceName = serviceName;
     }
 
     @RequestMapping
-    public ResponseEntity tweet(HttpServletRequest httpServletRequest) {
+    public Canary getCanary(HttpServletRequest httpServletRequest) {
 
         if (secret != null && !secret.isEmpty()) {
 
@@ -52,10 +62,24 @@ public class CanaryController {
                     .orElseGet(() -> httpServletRequest.getHeader("Authorization"));
 
             if (!secret.equals(providedSecret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
+                throw new CanaryFailedAuthenticationException();
             }
         }
-        return ResponseEntity.ok(
-                healthAggregator.collect());
+        List<HealthTweet> healthTweets = healthAggregator.collect();
+        return Canary.ok(serviceName, healthTweets);
+    }
+
+    @ExceptionHandler(CanaryFailedAuthenticationException.class)
+    public ResponseEntity onAuthenticationFailure(CanaryFailedAuthenticationException e) {
+
+        return status(HttpStatus.UNAUTHORIZED)
+                .body(Canary.forbidden(serviceName));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity onError(RuntimeException e) {
+
+        return status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Canary.error(serviceName));
     }
 }

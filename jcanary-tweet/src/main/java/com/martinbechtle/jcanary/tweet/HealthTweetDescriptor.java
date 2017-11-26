@@ -2,6 +2,7 @@ package com.martinbechtle.jcanary.tweet;
 
 import com.martinbechtle.jcanary.api.DependencyImportance;
 import com.martinbechtle.jcanary.api.DependencyType;
+import com.martinbechtle.jcanary.api.HealthMonitor;
 
 import java.lang.annotation.*;
 

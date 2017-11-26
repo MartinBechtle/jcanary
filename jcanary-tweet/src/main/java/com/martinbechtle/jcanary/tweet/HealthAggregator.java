@@ -1,6 +1,9 @@
 package com.martinbechtle.jcanary.tweet;
 
 import com.martinbechtle.jcanary.api.DependencyStatus;
+import com.martinbechtle.jcanary.api.HealthMonitor;
+import com.martinbechtle.jcanary.api.HealthResult;
+import com.martinbechtle.jcanary.api.HealthTweet;
 import com.martinbechtle.jrequire.Require;
 
 import java.time.Clock;
