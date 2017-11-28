@@ -16,6 +16,10 @@ public class HealthTweet {
 
     private HealthResult result;
 
+    public HealthTweet() {
+        // for serialization
+    }
+
     public HealthTweet(Dependency dependency, HealthResult result) {
 
         this.dependency = notNull(dependency, "dependency");

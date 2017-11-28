@@ -19,6 +19,10 @@ public class Dependency {
 
     private String name;
 
+    public Dependency() {
+        // for serialization
+    }
+
     public Dependency(DependencyImportance importance, DependencyType type, String name) {
 
         this.importance = notNull(importance);

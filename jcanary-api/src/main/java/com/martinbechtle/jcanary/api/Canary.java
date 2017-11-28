@@ -34,7 +34,11 @@ public class Canary {
      */
     private List<HealthTweet> tweets;
 
-    protected Canary(String serviceName, CanaryResult result, List<HealthTweet> tweets) {
+    Canary() {
+        // for serialization
+    }
+
+    public Canary(String serviceName, CanaryResult result, List<HealthTweet> tweets) {
 
         this.serviceName = Optional.ofNullable(serviceName).orElse(UNKNOWN_SERVICE);
         this.result = notNull(result);

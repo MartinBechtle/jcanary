@@ -18,7 +18,11 @@ public class HealthResult {
 
     private String statusText;
 
-    private HealthResult(DependencyStatus status, String statusText) {
+    public HealthResult() {
+        // for serialization
+    }
+
+    public HealthResult(DependencyStatus status, String statusText) {
 
         this.status = status;
         this.statusText = statusText;
