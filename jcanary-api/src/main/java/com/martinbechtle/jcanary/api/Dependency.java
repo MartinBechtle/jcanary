@@ -13,11 +13,11 @@ import static com.martinbechtle.jrequire.Require.notNull;
  */
 public class Dependency {
 
-    private final DependencyImportance importance;
+    private DependencyImportance importance;
 
-    private final DependencyType type;
+    private DependencyType type;
 
-    private final String name;
+    private String name;
 
     public Dependency(DependencyImportance importance, DependencyType type, String name) {
 
@@ -31,14 +31,32 @@ public class Dependency {
         return importance;
     }
 
+    public Dependency setImportance(DependencyImportance importance) {
+
+        this.importance = importance;
+        return this;
+    }
+
     public DependencyType getType() {
 
         return type;
     }
 
+    public Dependency setType(DependencyType type) {
+
+        this.type = type;
+        return this;
+    }
+
     public String getName() {
 
         return name;
+    }
+
+    public Dependency setName(String name) {
+
+        this.name = name;
+        return this;
     }
 
     @Override

@@ -14,9 +14,9 @@ import static com.martinbechtle.jrequire.Require.notNull;
  */
 public class HealthResult {
 
-    private final DependencyStatus status;
+    private DependencyStatus status;
 
-    private final String statusText;
+    private String statusText;
 
     private HealthResult(DependencyStatus status, String statusText) {
 
@@ -41,9 +41,21 @@ public class HealthResult {
         return status;
     }
 
+    public HealthResult setStatus(DependencyStatus status) {
+
+        this.status = status;
+        return this;
+    }
+
     public String getStatusText() {
 
         return statusText;
+    }
+
+    public HealthResult setStatusText(String statusText) {
+
+        this.statusText = statusText;
+        return this;
     }
 
     @Override

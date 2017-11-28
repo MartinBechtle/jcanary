@@ -21,20 +21,20 @@ public class Canary {
     /**
      * The service for which this canary was produced
      */
-    private final String serviceName;
+    private String serviceName;
 
     /**
      * The result of the invocation to the canary endpoint on the service. See {@link CanaryResult}
      */
-    private final CanaryResult result;
+    private CanaryResult result;
 
     /**
      * List of all collected {@link HealthTweet}s.
      * Might be empty if no {@link HealthMonitor}s defined on the service or result is not {@link CanaryResult#OK}
      */
-    private final List<HealthTweet> tweets;
+    private List<HealthTweet> tweets;
 
-    private Canary(String serviceName, CanaryResult result, List<HealthTweet> tweets) {
+    protected Canary(String serviceName, CanaryResult result, List<HealthTweet> tweets) {
 
         this.serviceName = Optional.ofNullable(serviceName).orElse(UNKNOWN_SERVICE);
         this.result = notNull(result);
@@ -61,14 +61,32 @@ public class Canary {
         return serviceName;
     }
 
+    public Canary setServiceName(String serviceName) {
+
+        this.serviceName = serviceName;
+        return this;
+    }
+
     public CanaryResult getResult() {
 
         return result;
     }
 
+    public Canary setResult(CanaryResult result) {
+
+        this.result = result;
+        return this;
+    }
+
     public List<HealthTweet> getTweets() {
 
         return tweets;
+    }
+
+    public Canary setTweets(List<HealthTweet> tweets) {
+
+        this.tweets = tweets;
+        return this;
     }
 
     @Override

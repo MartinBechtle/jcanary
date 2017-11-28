@@ -12,9 +12,9 @@ import static com.martinbechtle.jrequire.Require.notNull;
  */
 public class HealthTweet {
 
-    private final Dependency dependency;
+    private Dependency dependency;
 
-    private final HealthResult result;
+    private HealthResult result;
 
     public HealthTweet(Dependency dependency, HealthResult result) {
 
@@ -27,9 +27,21 @@ public class HealthTweet {
         return dependency;
     }
 
+    public HealthTweet setDependency(Dependency dependency) {
+
+        this.dependency = dependency;
+        return this;
+    }
+
     public HealthResult getResult() {
 
         return result;
+    }
+
+    public HealthTweet setResult(HealthResult result) {
+
+        this.result = result;
+        return this;
     }
 
     @Override
