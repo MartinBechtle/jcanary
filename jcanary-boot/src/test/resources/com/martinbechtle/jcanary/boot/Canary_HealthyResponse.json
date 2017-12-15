@@ -1,0 +1,16 @@
+{
+  "serviceName": "test-service",
+  "result": "OK",
+  "tweets": [
+    {
+      "dependency": {
+        "importance": "PRIMARY",
+        "type": "RESOURCE",
+        "name": "dummyMonitor"
+      },
+      "result": {
+        "status": "HEALTHY",
+        "statusText": ""
+      }
+    }]
+}

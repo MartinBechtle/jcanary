@@ -11,4 +11,6 @@ dependencies {
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testCompile 'com.jayway.jsonpath:json-path:2.3.0'
+    testCompile 'org.skyscreamer:jsonassert:1.5.0'
+    testCompile 'commons-io:commons-io:2.6'
 }

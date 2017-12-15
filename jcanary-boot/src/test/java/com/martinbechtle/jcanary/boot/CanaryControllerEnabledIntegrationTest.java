@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.martinbechtle.jcanary.boot.TestUtils.responseBodyEqualsJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,6 +45,7 @@ public class CanaryControllerEnabledIntegrationTest {
 
         mockMvc.perform(get("/canary"))
                 .andExpect(status().isOk())
+                .andExpect(responseBodyEqualsJson("Canary_HealthyResponse.json", getClass()))
                 .andExpect(jsonPath("$.serviceName").value("test-service"))
                 .andExpect(jsonPath("$.result").value("OK"))
                 .andExpect(jsonPath("$.tweets[0].dependency.importance").value("PRIMARY"))
@@ -52,4 +54,6 @@ public class CanaryControllerEnabledIntegrationTest {
                 .andExpect(jsonPath("$.tweets[0].result.status").value("HEALTHY"))
                 .andExpect(jsonPath("$.tweets[0].result.statusText").value(""));
     }
+
+
 }
