@@ -67,8 +67,8 @@ class HealthAggregatorTest {
                     .register(new TestHealthMonitorWithCriticalStatus());
 
             List<HealthTweet> expectedTweets = Arrays.asList(
-                    new HealthTweet(defaultDependency("monitor"), HealthResult.ok(), 10),
-                    new HealthTweet(defaultDependency("failingMonitor"), criticalResult(), 100)
+                    new HealthTweet(defaultDependency("monitor"), HealthResult.ok(), 0),
+                    new HealthTweet(defaultDependency("failingMonitor"), criticalResult(), 0)
             );
 
             List<HealthTweet> actualTweets = healthAggregator.collect();
@@ -85,8 +85,8 @@ class HealthAggregatorTest {
                     .register(new TestHealthMonitorThrowing());
 
             List<HealthTweet> expectedTweets = Arrays.asList(
-                    new HealthTweet(defaultDependency("monitor"), HealthResult.ok(), 10),
-                    new HealthTweet(defaultDependency("exceptionThrowingMonitor"), unknownResult(), 12000)
+                    new HealthTweet(defaultDependency("monitor"), HealthResult.ok(), 0),
+                    new HealthTweet(defaultDependency("exceptionThrowingMonitor"), unknownResult(), 0)
             );
 
             List<HealthTweet> actualTweets = healthAggregator.collect();
