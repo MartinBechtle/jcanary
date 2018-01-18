@@ -1,7 +1,10 @@
 package com.martinbechtle.jcanary.boot;
 
 import org.apache.commons.io.IOUtils;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.io.IOException;
@@ -13,7 +16,9 @@ import java.nio.charset.Charset;
  */
 public class TestUtils {
 
-    public static ResultMatcher responseBodyEqualsJson(String samePackageResourceName, Class<?> klazz)
+    public static ResultMatcher responseBodyEqualsJson(String samePackageResourceName,
+                                                       Class<?> klazz,
+                                                       Customization...customizations)
             throws IOException {
 
         return result -> {
@@ -27,7 +32,11 @@ public class TestUtils {
                             " in " + klazz.getPackage().getName());
                 }
                 String expected = IOUtils.toString(resource, Charset.forName("UTF-8"));
-                JSONAssert.assertEquals(expected, actual, true);
+
+                JSONAssert.assertEquals(
+                        expected,
+                        actual,
+                        new CustomComparator(JSONCompareMode.STRICT, customizations));
             }
         };
     }

@@ -52,8 +52,10 @@ public class HealthTweeter {
 
         return getLastHealthTweetIfNotExpired()
                 .orElseGet(() -> {
+                    long start = clock.millis();
                     HealthResult result = monitor.check();
-                    HealthTweet healthTweet = new HealthTweet(dependency, result);
+                    long executionTimeMs = clock.millis() - start;
+                    HealthTweet healthTweet = new HealthTweet(dependency, result, executionTimeMs);
                     return setLastHealthTweet(healthTweet);
                 });
     }

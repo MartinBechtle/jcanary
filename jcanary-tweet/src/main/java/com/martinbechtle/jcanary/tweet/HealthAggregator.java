@@ -69,13 +69,16 @@ public class HealthAggregator {
         return healthTweets.values()
                 .stream()
                 .map(healthTweeter -> {
+                    long start = clock.millis();
                     try {
                         return healthTweeter.tweet();
                     }
                     catch (RuntimeException e) {
+                        long executionTimeMs = clock.millis() - start;
                         return new HealthTweet(
                                 healthTweeter.getDependency(),
-                                HealthResult.of(DependencyStatus.UNKNOWN, UNCAUGTHT_EXCEPTION_ERRMSG));
+                                HealthResult.of(DependencyStatus.UNKNOWN, UNCAUGTHT_EXCEPTION_ERRMSG),
+                                executionTimeMs);
                     }
                 })
                 .collect(toList());
