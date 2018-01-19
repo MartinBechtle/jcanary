@@ -1,9 +1,6 @@
 package com.martinbechtle.jcanary.tweet;
 
-import com.martinbechtle.jcanary.api.Dependency;
-import com.martinbechtle.jcanary.api.HealthMonitor;
-import com.martinbechtle.jcanary.api.HealthResult;
-import com.martinbechtle.jcanary.api.HealthTweet;
+import com.martinbechtle.jcanary.api.*;
 
 import java.time.Clock;
 import java.util.Optional;
@@ -24,7 +21,8 @@ public class HealthTweeter {
     private final HealthMonitor monitor;
     private final Dependency dependency;
     private final Clock clock;
-    private final long timeToLiveInMillis;
+    private final long healthyTimeToLiveInMillis;
+    private final long unhealthyTimeToLiveInMillis;
 
     private HealthTweet lastTweet;
     private Long nextComputeTimeMillis;
@@ -48,7 +46,8 @@ public class HealthTweeter {
                 );
 
         this.dependency = new Dependency(descriptor.importance(), descriptor.type(), descriptor.name());
-        this.timeToLiveInMillis = descriptor.secondsToLive() * 1000L;
+        this.healthyTimeToLiveInMillis = descriptor.secondsToLive() * 1000L;
+        this.unhealthyTimeToLiveInMillis = descriptor.secondsToLiveIfUnhealthy() * 1000L;
     }
 
     public HealthTweet tweet() {
@@ -74,8 +73,13 @@ public class HealthTweeter {
 
     private HealthTweet setLastHealthTweet(HealthTweet healthTweet) {
 
+        boolean isHealthy = healthTweet.getResult() != null &&
+                DependencyStatus.HEALTHY == healthTweet.getResult().getStatus();
+
+        long timeToLiveMillis = isHealthy ? healthyTimeToLiveInMillis : unhealthyTimeToLiveInMillis;
+
         lastTweet = healthTweet;
-        nextComputeTimeMillis = clock.millis() + timeToLiveInMillis;
+        nextComputeTimeMillis = clock.millis() + timeToLiveMillis;
         return lastTweet;
     }
 
