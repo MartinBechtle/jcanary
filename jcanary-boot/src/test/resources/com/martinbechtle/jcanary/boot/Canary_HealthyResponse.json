@@ -11,6 +11,7 @@
       "result": {
         "status": "HEALTHY",
         "statusText": ""
-      }
+      },
+      "executionTimeMs": "2"
     }]
 }

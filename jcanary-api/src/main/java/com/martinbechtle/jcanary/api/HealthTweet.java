@@ -16,14 +16,17 @@ public class HealthTweet {
 
     private HealthResult result;
 
+    private Long executionTimeMs;
+
     public HealthTweet() {
         // for serialization
     }
 
-    public HealthTweet(Dependency dependency, HealthResult result) {
+    public HealthTweet(Dependency dependency, HealthResult result, long executionTimeMs) {
 
         this.dependency = notNull(dependency, "dependency");
         this.result = notNull(result, "result");
+        this.executionTimeMs = executionTimeMs;
     }
 
     public Dependency getDependency() {
@@ -48,6 +51,17 @@ public class HealthTweet {
         return this;
     }
 
+    public Long getExecutionTimeMs() {
+
+        return executionTimeMs;
+    }
+
+    public HealthTweet setExecutionTimeMs(Long executionTimeMs) {
+
+        this.executionTimeMs = executionTimeMs;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
 
@@ -64,6 +78,7 @@ public class HealthTweet {
         return new EqualsBuilder()
                 .append(dependency, that.dependency)
                 .append(result, that.result)
+                .append(executionTimeMs, that.executionTimeMs)
                 .isEquals();
     }
 
@@ -73,6 +88,7 @@ public class HealthTweet {
         return new HashCodeBuilder(17, 37)
                 .append(dependency)
                 .append(result)
+                .append(executionTimeMs)
                 .toHashCode();
     }
 
@@ -82,6 +98,7 @@ public class HealthTweet {
         return "HealthTweet{" +
                 "dependency=" + dependency +
                 ", result=" + result +
+                ", executionTimeMs=" + executionTimeMs +
                 '}';
     }
 }

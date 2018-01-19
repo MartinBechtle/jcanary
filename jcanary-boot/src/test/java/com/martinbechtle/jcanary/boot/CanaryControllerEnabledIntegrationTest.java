@@ -3,6 +3,7 @@ package com.martinbechtle.jcanary.boot;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.Customization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
@@ -45,14 +46,9 @@ public class CanaryControllerEnabledIntegrationTest {
 
         mockMvc.perform(get("/canary"))
                 .andExpect(status().isOk())
-                .andExpect(responseBodyEqualsJson("Canary_HealthyResponse.json", getClass()))
-                .andExpect(jsonPath("$.serviceName").value("test-service"))
-                .andExpect(jsonPath("$.result").value("OK"))
-                .andExpect(jsonPath("$.tweets[0].dependency.importance").value("PRIMARY"))
-                .andExpect(jsonPath("$.tweets[0].dependency.type").value("RESOURCE"))
-                .andExpect(jsonPath("$.tweets[0].dependency.name").value("dummyMonitor"))
-                .andExpect(jsonPath("$.tweets[0].result.status").value("HEALTHY"))
-                .andExpect(jsonPath("$.tweets[0].result.statusText").value(""));
+                .andExpect(responseBodyEqualsJson("Canary_HealthyResponse.json",
+                        getClass(),
+                        new Customization("tweets[0].executionTimeMs", (o1, o2) -> o1 instanceof Integer)));
     }
 
 
