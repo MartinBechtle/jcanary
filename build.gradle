@@ -14,6 +14,8 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'maven-publish'
+
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -32,6 +34,28 @@ allprojects {
         testCompile(libraries.junitApi)
         testCompile(libraries.mockito)
         testRuntime(libraries.junitEngine)
+    }
+
+    publishing {
+        repositories {
+            mavenLocal() // upload test builds to local maven repo when developing
+        }
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                // carry over any transitive dependencies
+                pom.withXml {
+                    asNode().dependencies.'*'.findAll() {
+                        it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find {
+                            dep -> dep.name == it.artifactId.text()
+                        }
+                    }.each() {
+                        it.scope*.value = 'compile'
+                    }
+                }
+            }
+        }
     }
 }
 

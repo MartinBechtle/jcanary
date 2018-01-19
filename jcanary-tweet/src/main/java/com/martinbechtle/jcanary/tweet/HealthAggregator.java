@@ -4,12 +4,13 @@ import com.martinbechtle.jcanary.api.DependencyStatus;
 import com.martinbechtle.jcanary.api.HealthMonitor;
 import com.martinbechtle.jcanary.api.HealthResult;
 import com.martinbechtle.jcanary.api.HealthTweet;
-import com.martinbechtle.jrequire.Require;
 
 import java.time.Clock;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
+import static com.martinbechtle.jrequire.Require.notNull;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -26,11 +27,20 @@ public class HealthAggregator {
 
     private final Clock clock;
 
+    private final ForkJoinPool forkJoinPool;
+
     static final String UNCAUGTHT_EXCEPTION_ERRMSG = "Error while trying to compute status";
 
-    public HealthAggregator(Clock clock) {
+    /**
+     * @param clock use {@link Clock#systemDefaultZone()} unless you have specific needs
+     * @param forkJoinPool a thread pool to be used for parallel processing of health monitors, please set it up
+     *                   with a maximum number of threads proportional to the number of health checks and their
+     *                   expected duration
+     */
+    public HealthAggregator(Clock clock, ForkJoinPool forkJoinPool) {
 
-        this.clock = clock;
+        this.clock = notNull(clock);
+        this.forkJoinPool = notNull(forkJoinPool);
         this.healthTweets = new LinkedHashMap<>();
     }
 
@@ -43,7 +53,7 @@ public class HealthAggregator {
      */
     public HealthAggregator register(HealthMonitor monitor) {
 
-        Require.notNull(monitor);
+        notNull(monitor);
 
         HealthTweeter healthTweeter = new HealthTweeter(monitor, clock);
         String healthTweeterName = healthTweeter.getName();
@@ -66,22 +76,26 @@ public class HealthAggregator {
      */
     public List<HealthTweet> collect() {
 
-        return healthTweets.values()
-                .stream()
-                .map(healthTweeter -> {
-                    long start = clock.millis();
-                    try {
-                        return healthTweeter.tweet();
-                    }
-                    catch (RuntimeException e) {
-                        long executionTimeMs = clock.millis() - start;
-                        return new HealthTweet(
-                                healthTweeter.getDependency(),
-                                HealthResult.of(DependencyStatus.UNKNOWN, UNCAUGTHT_EXCEPTION_ERRMSG),
-                                executionTimeMs);
-                    }
-                })
-                .collect(toList());
+        return forkJoinPool.submit(() -> healthTweets.values()
+                .parallelStream() // will use this fork-join pool instead of the common pool
+                .map(this::tweet)
+                .collect(toList()))
+                .join();
+    }
+
+    private HealthTweet tweet(HealthTweeter healthTweeter) {
+
+        long start = clock.millis();
+        try {
+            return healthTweeter.tweet();
+        }
+        catch (RuntimeException e) {
+            long executionTimeMs = clock.millis() - start;
+            return new HealthTweet(
+                    healthTweeter.getDependency(),
+                    HealthResult.of(DependencyStatus.UNKNOWN, UNCAUGTHT_EXCEPTION_ERRMSG),
+                    executionTimeMs);
+        }
     }
 
 }
