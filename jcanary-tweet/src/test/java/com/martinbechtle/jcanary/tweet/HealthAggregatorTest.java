@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
 import static com.martinbechtle.jcanary.tweet.HealthAggregator.UNCAUGTHT_EXCEPTION_ERRMSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SuppressWarnings("squid:S2187") // sonar does not recognise this as a unit test as all tests are nested
 class HealthAggregatorTest {
 
-    private HealthAggregator healthAggregator = new HealthAggregator(Clock.systemDefaultZone());
+    private HealthAggregator healthAggregator = new HealthAggregator(
+            Clock.systemDefaultZone(),
+            new ForkJoinPool(1));
 
     @Nested
     @DisplayName("register(HealthMonitor)")

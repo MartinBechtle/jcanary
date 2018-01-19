@@ -12,7 +12,10 @@ import static com.martinbechtle.jrequire.Require.notNull;
 import static java.util.Arrays.stream;
 
 /**
- * Component responsible for producing {@link HealthTweet}s
+ * Component responsible for producing {@link HealthTweet}s.
+ * 
+ * Essentially wraps a {@link HealthMonitor} adding extra functionality such as catching exceptions and measuring
+ * execution time.
  *
  * @author Martin Bechtle
  */

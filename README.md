@@ -151,7 +151,7 @@ public class CanaryConfig {
     @Bean(name = "canaryHealthAggregator")
     public HealthAggregator healthAggregator(DatabaseHealthMonitor databaseHealthMonitor) {
 
-        return new HealthAggregator(Clock.systemDefaultZone())
+        return new HealthAggregator(Clock.systemDefaultZone(), new ForkJoinPool(3))
                 .register(databaseHealthMonitor);
     }
 }
@@ -159,6 +159,9 @@ public class CanaryConfig {
 
 It is technically possible to define what implementation of Clock to use (for determining cache timeout),
 but the systemDefaultZone one is recommended.
+
+Note that the ForkJoinPool is meant to be used for parallel processing of health monitors.
+It's up to you to choose a size that is proportional to your number of health checks and their duration. 
 
 Now set enable jcanary-boot in your application.properties (or yaml):
 ```properties
