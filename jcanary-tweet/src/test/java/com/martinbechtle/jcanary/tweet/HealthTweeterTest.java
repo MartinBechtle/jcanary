@@ -1,5 +1,6 @@
 package com.martinbechtle.jcanary.tweet;
 
+import com.martinbechtle.jcanary.api.DependencyStatus;
 import com.martinbechtle.jcanary.api.HealthMonitor;
 import com.martinbechtle.jcanary.api.HealthResult;
 import org.junit.jupiter.api.*;
@@ -44,7 +45,7 @@ class HealthTweeterTest {
         }
 
         @Test
-        @DisplayName("should invoke monitor twice on two calls when secondsToLive is positive and such amount of seconds as already passed by the time of the second invocation")
+        @DisplayName("should invoke monitor twice on two calls when secondsToLive is positive and such amount of seconds has already passed by the time of the second invocation")
         void tweetCacheExpired() {
 
             Clock clock = mock(Clock.class);
@@ -55,7 +56,25 @@ class HealthTweeterTest {
             healthTweeter.tweet();
 
             reset(clock);
-            when(clock.millis()).thenReturn(200000L);
+            when(clock.millis()).thenReturn(200_000L);
+
+            healthTweeter.tweet();
+            verify(nonCachingMonitor, times(2)).check();
+        }
+
+        @Test
+        @DisplayName("should invoke monitor again if {secondsToLive} seconds have not yet passed, but {secondsToLiveIfUnhealth} seconds have passed and previous result was unhealthy")
+        void tweetUnhealthyCacheExpired() {
+
+            Clock clock = mock(Clock.class);
+            when(clock.millis()).thenReturn(0L);
+
+            HealthMonitor nonCachingMonitor = Mockito.spy(new UnhealthyCachingHealthMonitor());
+            HealthTweeter healthTweeter = new HealthTweeter(nonCachingMonitor, clock);
+            healthTweeter.tweet();
+
+            reset(clock);
+            when(clock.millis()).thenReturn(20_000L);
 
             healthTweeter.tweet();
             verify(nonCachingMonitor, times(2)).check();
@@ -79,6 +98,16 @@ class HealthTweeterTest {
         public HealthResult check() {
 
             return HealthResult.ok();
+        }
+    }
+
+    @HealthTweetDescriptor(name = "monitor", secondsToLive = 100, secondsToLiveIfUnhealthy = 10)
+    private static class UnhealthyCachingHealthMonitor implements HealthMonitor {
+
+        @Override
+        public HealthResult check() {
+
+            return HealthResult.of(DependencyStatus.CRITICAL, "I eat unhealthy food");
         }
     }
 
