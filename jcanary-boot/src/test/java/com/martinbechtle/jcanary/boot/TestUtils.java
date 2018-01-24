@@ -18,8 +18,7 @@ public class TestUtils {
 
     public static ResultMatcher responseBodyEqualsJson(String samePackageResourceName,
                                                        Class<?> klazz,
-                                                       Customization...customizations)
-            throws IOException {
+                                                       Customization...customizations) {
 
         return result -> {
 

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.martinbechtle.jcanary.boot.TestUtils.responseBodyEqualsJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,7 +55,8 @@ public class CanaryControllerSecuredIntegrationTest {
             throws Exception {
 
         mockMvc.perform(get("/canary").param("secret", SECRET_WRONG))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(responseBodyEqualsJson("Canary_ForbiddenResponse.json", getClass()));
     }
 
     @Test
